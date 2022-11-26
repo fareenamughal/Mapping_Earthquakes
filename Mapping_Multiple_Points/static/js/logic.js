@@ -32,3 +32,9 @@ let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/dark-v10/tile
 });
 // Then we add our 'graymap' tile layer to the map.
 streets.addTo(map);
+
+
+// can also use the function for population as below:
+//function markerSize(population) {
+    return population / 200000;
+// then don't need to divide population by 200000 as in the loop above
