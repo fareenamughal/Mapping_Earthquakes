@@ -36,5 +36,5 @@ streets.addTo(map);
 
 // can also use the function for population as below:
 //function markerSize(population) {
-    return population / 200000;
+//   return population / 200000;
 // then don't need to divide population by 200000 as in the loop above
