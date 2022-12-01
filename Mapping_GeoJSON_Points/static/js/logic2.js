@@ -3,6 +3,9 @@
 //-->
 // Add console.log to check to see if our code is working.
 
+//The onEachFeature Function
+
+
 console.log("working");
 
 // Create the map object with center at the San Francisco airport.
@@ -34,20 +37,20 @@ let sanFranAirport =
 L.geoJSON(sanFranAirport, {
   onEachFeature: function(feature, layer) {
     console.log(layer);
-    onEachFeature.bindPopup("<h2>" + feature.properties.name + "</h1> <hr> <h2>" + feature.properties.faa + "</h2>");
+    layer.bindPopup("<h2>Airport code: "  + feature.properties.faa + "</h1> <hr> <h2>Airport name: " + feature.properties.name + "</h2>");
    }
 }).addTo(map);
 
 
 
 // We create the tile layer that will be the background of our map.
-let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
     accessToken: API_KEY
 });
 // Then we add our 'graymap' tile layer to the map.
-streets.addTo(map);
+streets.addTo(map);        
 
 
 //he pointToLayer callback function adds markers to a map, whereas the onEachFeature callback function allows you to add styling and bind data to a popup marker.
