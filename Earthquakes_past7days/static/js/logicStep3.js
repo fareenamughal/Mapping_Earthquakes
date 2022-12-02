@@ -7,15 +7,13 @@
 //Map Multiple GeoJSON Points
 //Add Multiple Maps
 //Map GeoJSON Polygons
+//Add Earthquake Data to a Map
+//changing the marker to a circle with a radius representing the earthquake's magnitude, and then we'll style each earthquake data point
+//****Add Color and a Popup for Each Earthquake**** color?
+
 
 console.log("working");
 
-//Create the map object with center and zoom level.
-// Create the map object with a center and zoom level.
-//let map = L.map("mapid", {
-//    center: [43.7.0, -79.3.],
-//    zoom: 11
-//  });
 
 // We create the tile layer that will be the background of our map.
 let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -23,9 +21,7 @@ let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/t
     maxZoom: 18,
     accessToken: API_KEY
 });
-
-// Then we add our 'graymap' tile layer to the map.
-//streets.addTo(map);               
+      
 
 // We create the dark view tile layer that will be an option for our map.
 let satelliteStreets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -52,37 +48,69 @@ let map = L.map('mapid', {
 // Pass our map layers into our layers control and add the layers control to the map.
 L.control.layers(baseMaps).addTo(map);
 
+// This function returns the style data for each of the earthquakes we plot on
+// the map. We pass the magnitude of the earthquake into a function
+// to calculate the radius.
+function styleInfo(feature) {
+  return {
+    opacity: 1,
+    fillOpacity: 1,
+    fillColor: getColor(feature.properties.mag),
+    color: "#000000",
+    radius: getRadius(feature.properties.mag),
+    stroke: true,
+    weight: 0.5
+  };
+}
 
-//Accessing the airport GeoJSON URL
-let torontoHoods = "https://raw.githubusercontent.com/fareenamughal/Mapping_Earthquakes/Earthquakes_past7days/Earthquakes_past7days/static/Data/torontoNeighborhoods.json";
+// This function determines the color of the circle based on the magnitude of the earthquake.
+function getColor(magnitude) {
+  if (magnitude > 5) {
+    return "#ea2c2c";
+  }
+  if (magnitude > 4) {
+    return "#ea822c";
+  }
+  if (magnitude > 3) {
+    return "#ee9c00";
+  }
+  if (magnitude > 2) {
+    return "#eecc00";
+  }
+  if (magnitude > 1) {
+    return "#d4ee00";
+  }
+  return "#98ee00";
+}
 
-//Accessing the airport GeoJSON URL
-//let torontoHoods = "https://raw.githubusercontent.com/fareenamughal/Mapping_Earthquakes/Earthquakes_past7days/Earthquakes_past7days/static/Data/torontoNeighborhoods.json";
+
+// This function determines the radius of the earthquake marker based on its magnitude.
+// Earthquakes with a magnitude of 0 will be plotted with a radius of 1.
+function getRadius(magnitude) {
+  if (magnitude === 0) {
+    return 1;
+  }
+  return magnitude * 4;
+}
+
+
 
 //Grabbing our GeoJSON data.
 d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(data) {
 //console.log(data);
   // Creating a GeoJSON layer with the retrieved data.
-  L.geoJSON(data).addTo(map);
+  L.geoJSON(data, {
+    pointToLayer: function(feature, latlng) {
+      console.log(data);
+      return L.circleMarker(latlng);
+    },
+      onEachFeature: function(feature, layer) {
+        layer.bindPopup("<h3> Magnitude: " + feature.properties.mag + "</h3> <hr><h3> Location: " + feature.properties.place + "</h3><hr><p> Time: " + new Date(feature.properties.time) + "</p>");
+      },
+      // We set the style for each circleMarker using our styleInfo function.
+    style: styleInfo
+  })
+  .addTo(map);
 });
-
-
-
-
-  // Creating a GeoJSON layer with the retrieved data.
-//L.geoJSON(data, {
-//  color: "#ffffa1",
-//  weight: 2,
-//  onEachFeature: function(feature, layer) {
-//    layer.bindPopup("<h3> Airline: " + feature.properties.airline + "</h3> <hr><h3> Destination: " + feature.properties.dst + "</h3>");
-//}
-//})
-//.addTo(map);
-//});
-
-//onEachFeature: function(feature, layer) {
-//  layer.bindPopup("<h3> Neighbourhood: " + feature.properties.AREA_NAME + "</h3>");
-//}
-//})
-//.addTo(map);
-//});
+      
+  

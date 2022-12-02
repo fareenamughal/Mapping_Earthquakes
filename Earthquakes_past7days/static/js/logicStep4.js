@@ -8,6 +8,9 @@
 //Add Multiple Maps
 //Map GeoJSON Polygons
 //Add Earthquake Data to a Map
+//changing the marker to a circle with a radius representing the earthquake's magnitude, and then we'll style each earthquake data point
+//****Add Color and a Popup for Each Earthquake**** color?
+//Add Earthquake Data as an Overlay
 
 console.log("working");
 
@@ -33,6 +36,14 @@ let baseMaps = {
     "Satellite Streets": satelliteStreets
   };
 
+// Create the earthquake layer for our map.
+let earthquakes = new L.layerGroup();
+
+// We define an object that contains the overlays.
+// This overlay will be visible all the time.
+let overlays = {
+  Earthquakes: earthquakes
+};
 
 
 //Create the map object with center, zoom level and default layer.
@@ -43,7 +54,53 @@ let map = L.map('mapid', {
 });
 
 // Pass our map layers into our layers control and add the layers control to the map.
-L.control.layers(baseMaps).addTo(map);
+L.control.layers(baseMaps, overlays).addTo(map);
+
+// This function returns the style data for each of the earthquakes we plot on
+// the map. We pass the magnitude of the earthquake into a function
+// to calculate the radius.
+function styleInfo(feature) {
+  return {
+    opacity: 1,
+    fillOpacity: 1,
+    fillColor: getColor(feature.properties.mag),
+    color: "#000000",
+    radius: getRadius(feature.properties.mag),
+    stroke: true,
+    weight: 0.5
+  };
+}
+
+// This function determines the color of the circle based on the magnitude of the earthquake.
+function getColor(magnitude) {
+  if (magnitude > 5) {
+    return "#ea2c2c";
+  }
+  if (magnitude > 4) {
+    return "#ea822c";
+  }
+  if (magnitude > 3) {
+    return "#ee9c00";
+  }
+  if (magnitude > 2) {
+    return "#eecc00";
+  }
+  if (magnitude > 1) {
+    return "#d4ee00";
+  }
+  return "#98ee00";
+}
+
+
+// This function determines the radius of the earthquake marker based on its magnitude.
+// Earthquakes with a magnitude of 0 will be plotted with a radius of 1.
+function getRadius(magnitude) {
+  if (magnitude === 0) {
+    return 1;
+  }
+  return magnitude * 4;
+}
+
 
 
 //Grabbing our GeoJSON data.
@@ -51,73 +108,19 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
 //console.log(data);
   // Creating a GeoJSON layer with the retrieved data.
   L.geoJSON(data, {
-      color: "#ffffa1",
-      weight: 2,
+    pointToLayer: function(feature, latlng) {
+      console.log(data);
+      return L.circleMarker(latlng);
+    },
       onEachFeature: function(feature, layer) {
         layer.bindPopup("<h3> Magnitude: " + feature.properties.mag + "</h3> <hr><h3> Location: " + feature.properties.place + "</h3><hr><p> Time: " + new Date(feature.properties.time) + "</p>");
-      }
-  })
-  .addTo(map);
-});
+      },
+      // We set the style for each circleMarker using our styleInfo function.
+    style: styleInfo
+  }).addTo(earthquakes);
 
+  //Then we add the earthquake layer to our map
+  earthquakes.addTo(map);
+});
       
   
-
-
-// Use forEach to loop through the cities array and create one marker for each city object
-// cities.forEach(store =>   L.marker(city.location) 
-//for (var i = 0; i < cities.length; i++) {
-//  L.circle(cities[i].location, {
-//    fillOpacity: 0.75,
-//    color: "white",
-//    fillColor: "purple",
-//    // Setting our circle's radius equal to the output of our markerSize function
-//    // This will make our marker's size proportionate to its population
-//    radius: markerSize(cities[i].population)
-//  }).bindPopup("<h1>" + cities[i].name + "</h1> <hr> <h3>Population: " + cities[i].population + "</h3>").addTo(myMap);
-//}</hr>
-
-
-// Grabbing our GeoJSON data.
-//L.geoJSON(sanFranAirport, {
-  // We turn each feature into a marker on the map.
- //pointToLayer: function(feature, latlng) {
-   // console.log(feature);
-   // return L.marker(latlng)
-    //.bindPopup("<h2>" + feature.properties.city + "</h2>");
-  //}
-//
-//}).addTo(map);
-
-// Function to determine marker size based on population
-//function markerSize(population) {
-//  return population / 40;
-//}
-
-//var cityMarkers = [];
-//var stateMarkers = [];
-
-// Loop through locations and create city and state markers
-//for (var i = 0; i < locations.length; i++) {
-//  // Setting the marker radius for the state by passing population into the markerSize function
-//  stateMarkers.push(
-//    L.circle(locations[i].coordinates, {
-//      stroke: false,
-//      fillOpacity: 0.75,
-//      color: "white",
-//      fillColor: "white",
-//      radius: markerSize(locations[i].state.population)
-//    })
-//  );
-
-//  // Setting the marker radius for the city by passing population into the markerSize function
-//  cityMarkers.push(
-//    L.circle(locations[i].coordinates, {
-//      stroke: false,
-//      fillOpacity: 0.75,
-//      color: "#green",
-//      fillColor: "green",
-//      radius: markerSize(locations[i].city.population)
-//    })
-//  );
-//}
