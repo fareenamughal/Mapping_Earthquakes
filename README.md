@@ -22,3 +22,6 @@ and current week major earthquake data with magnitude .4.5
 ----
 
 The result for all the above 3 deliverables can be viewed from the htlm file which is loading well and displaying all the component as outlined in the deliverables.
+
+
+https://github.com/fareenamughal/Mapping_Earthquakes/blob/8f4f86b89eafa4f346c908357299036d53daec01/Earthquake_Challenge/index.html
