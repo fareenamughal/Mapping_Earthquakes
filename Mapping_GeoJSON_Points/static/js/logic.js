@@ -3,14 +3,22 @@
 //-->
 // Add console.log to check to see if our code is working.
 
+<<<<<<< HEAD
+=======
+//Map GeoJSON Point Type
+>>>>>>> Mapping_GeoJSON_Points
 console.log("working");
 
 // Create the map object with center at the San Francisco airport.
 let map = L.map('mapid').setView([37.5, -122.5], 10);
 
+<<<<<<< HEAD
 
 // Add GeoJSON data.
 
+=======
+// Add GeoJSON data.
+>>>>>>> Mapping_GeoJSON_Points
 let sanFranAirport =
 {"type":"FeatureCollection","features":[{
     "type":"Feature",
@@ -31,6 +39,7 @@ let sanFranAirport =
 ]};
 
 // Grabbing our GeoJSON data.
+<<<<<<< HEAD
 L.geoJSON(sanFranAirport, {
   // We turn each feature into a marker on the map.
   pointToLayer: function(feature, latlng) {
@@ -44,11 +53,19 @@ L.geoJSON(sanFranAirport, {
 
 // We create the tile layer that will be the background of our map.
 let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+=======
+L.geoJSON(sanFranAirport).addTo(map);
+
+
+// We create the tile layer that will be the background of our map.
+let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+>>>>>>> Mapping_GeoJSON_Points
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
     accessToken: API_KEY
 });
 // Then we add our 'graymap' tile layer to the map.
+<<<<<<< HEAD
 streets.addTo(map);     
 
 //he pointToLayer callback function adds markers to a map, whereas the onEachFeature callback function allows you to add styling and bind data to a popup marker.
@@ -64,4 +81,7 @@ streets.addTo(map);
 //   }
 //});     
 
+=======
+streets.addTo(map);  
+>>>>>>> Mapping_GeoJSON_Points
 
